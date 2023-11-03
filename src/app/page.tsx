@@ -7,6 +7,7 @@ import axiosService from "@/network";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import axios from "axios";
+import Loader from "../components/Loader"
 import { addMovieToFavorites, removeMovieFromFavorites } from "../../lib/db";
 
 type MovieID = string;
@@ -15,6 +16,7 @@ export default function Home() {
   const [favorites, setFavorites] = useState<MovieID[]>([]);
   const [movies, setMovies] = useState([]);
   const [searchTerm, setSearchTerm] = useState("harry`");
+  const [loading, setLoading] = useState(false)
 
   const handleFavoriteToggle = (movieId: MovieID) => {
     if (favorites.includes(movieId)) {
@@ -43,9 +45,15 @@ export default function Home() {
     }
   };
 
+
   useEffect(() => {
+    setLoading(true)
+    
+   if(searchTerm === "") {
+    setSearchTerm("harry")
+   }
     if (searchTerm) {
-      const delayDebounce = setTimeout(() => handleSearch(), 300); // Debounce search
+      const delayDebounce = setTimeout(() => { handleSearch(); setLoading(false) }, 300); // Debounce search
       return () => clearTimeout(delayDebounce);
     }
   }, [searchTerm]);
@@ -65,6 +73,7 @@ export default function Home() {
   return (
     <>
       <ToastContainer />
+      {loading === true ? <Loader></Loader> : null}
       <Box
         sx={{
           display: "flex",
